@@ -3,8 +3,8 @@ title: "Gautam_Kapila_Unit3AssignmentSubmission"
 author: "G. Kapila"
 date: "5/23/2019"
 output: 
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 # Q1 - GitHub Closing 
@@ -65,7 +65,7 @@ adf
 
 ```
 
-#Q4 FiveThirtyEight Data
+# Q4 FiveThirtyEight Data
 
 ```{r fivethirtyeightData, echo=TRUE}
 
@@ -83,7 +83,7 @@ names(df)
 ```
 
 
-#Q5 Data Summary
+# Q5 Data Summary
 
 ```{r dataSummary2, echo=TRUE}
 names(df)
@@ -102,4 +102,10 @@ barplot(cnt.major_category$freq,names.arg=c(levels(cnt.major_category$x)),xlab =
 
 write.csv(df,file = 'output_data.csv',row.names = FALSE)
 
+```
+
+# Q6 GitHub Repo for HomeWork
+
+```{r githubRepoLink, echo=TRUE}
+# https://github.com/gkapila07/msds_homeworks/tree/master/dds
 ```
