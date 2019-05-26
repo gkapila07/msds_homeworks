@@ -1,0 +1,105 @@
+---
+title: "Gautam_Kapila_Unit3AssignmentSubmission"
+author: "G. Kapila"
+date: "5/23/2019"
+output: 
+  html_document: default
+  pdf_document: default
+---
+
+# Q1 - GitHub Closing 
+
+### Working directory in Windows is "C:/Users/Gautam/Documents/GMS/Sem 1 - 01 - Doing Data Science/Lecture 03"
+### Commands are executed in GitBash, shown below:
+
+```{r cloning, echo=TRUE}
+# cd Documents/GMS/Sem\ 1\ -\ 01\ -\ Doing\ Data\ Science/Lecture\ 03/
+# git init
+# git clone https://github.com/caesar0301/awesome-public-datasets
+
+```
+
+# Q2 - Data Summary
+
+```{r dataSummary, echo=TRUE}
+library(plyr)
+
+sessionInfo()
+tdf <- read.table("titanic.csv/titanic.csv", TRUE, sep = ",")
+cnt <- count(tdf$Sex)
+cnt
+barplot(cnt$freq,names.arg=c(levels(cnt$x)),xlab = 'Gender',ylab = 'Frequency',main = 'Frequency of Males and Females aboard Titanic')
+# Extracting columns for age, fare and survival below
+afs <- tdf[,c(6,10,2)]
+# Calculating mean per column
+sapply(afs, mean,na.rm=TRUE)
+```
+
+# Q3 - Function Building
+
+```{r functionBuilding, echo=TRUE}
+# Function to take in file name, and create corresponding objects
+
+sleepDataAnalysis <- function(fileName='') {
+  sData     <- read.table(fileName, TRUE, sep = ",", na.strings = c(" ","NA"))
+  minSleep  <- min(sData$Duration,na.rm = TRUE)
+  maxSleep  <- max(sData$Duration,na.rm = TRUE)
+  medianAge <- median(sData$Age,na.rm = TRUE)
+  mRSES     <- mean(sData$RSES,na.rm = TRUE)
+  sdRSES    <- sd(sData$RSES,na.rm = TRUE)
+  
+  MedianAge <- medianAge
+  SelfEsteem<- mRSES/5
+  SE_SD     <- sdRSES/5
+  DurationRange <- maxSleep - minSleep
+  
+  report    <- data.frame(MedianAge,SelfEsteem,SE_SD,DurationRange)
+  
+  return(round(report,2))
+  
+}
+
+adf <- sleepDataAnalysis('sleep_data_01.csv')
+
+adf
+
+```
+
+#Q4 FiveThirtyEight Data
+
+```{r fivethirtyeightData, echo=TRUE}
+
+sessionInfo()
+
+library(fivethirtyeight)
+
+df <- college_recent_grads
+
+dim(df)
+
+names(df)
+
+
+```
+
+
+#Q5 Data Summary
+
+```{r dataSummary2, echo=TRUE}
+names(df)
+
+length(names(df))
+
+library(plyr)
+
+cnt.major_category = count(df$major_category)
+
+cnt.major_category
+
+par(mar=c(5.1,15,4.1,2.1),las=2)
+    
+barplot(cnt.major_category$freq,names.arg=c(levels(cnt.major_category$x)),xlab = 'Frequency',main = 'Distribution of College Major in New Graduates',horiz = TRUE, col = 'blue')
+
+write.csv(df,file = 'output_data.csv',row.names = FALSE)
+
+```
