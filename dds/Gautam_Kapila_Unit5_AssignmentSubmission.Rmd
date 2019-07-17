@@ -81,3 +81,7 @@ as.vector(head(subset(final[order(-final$Total),],Gender=="F"),10)$FirstName)
 
 write.csv(head(subset(final[order(-final$Total),],Gender=="F"),10)[,c("FirstName","Total")],file = "top10BabyGirlNames.csv",row.names=FALSE)
 ```
+
+## GitHub Upload
+
+#### https://github.com/gkapila07/msds_homeworks/tree/master/dds
