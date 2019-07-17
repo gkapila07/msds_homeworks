@@ -1,0 +1,52 @@
+Homework 5 CodeBook
+-------------------
+
+Raw Data
+--------
+	- Contained in two files : yob2015.txt and yob2016.txt
+	- Above file contains information about popular children names for year 2015, and 2016 respectively. 
+
+	- Above files consists of three columns - each representing the first name, gender and amount of children with that name (for the year)
+
+	- Snapshot of first 5 babyname entries from file yob2015.txt :
+
+ 		Emma,F,20415
+ 		Olivia,F,19638
+ 		Sophia,F,17381
+ 		Ava,F,16340
+ 		Isabella,F,15574
+
+
+
+Steps to get to tidy Data
+-------------------------
+1. Reading the yob2015.txt and yob2016.txt into data frames :
+
+	Dataframe Name		File Name
+
+	df			yob2016.txt
+	y2015 			yob2015.txt
+
+2. Assigning variable names to loaded data frame (df):
+	
+ 	colnames(df) <- c('FirstName','Gender','NumberOfChildren')
+	colnames(y2015) <- c('FirstName','Gender','NumberOfChildren')
+
+3. Removing duplicate name, and reassigning df to y2016
+
+	y2016 <- df[-grep("yyy",df$FirstName),]
+
+4. Merging y2015 and y2016 data sets into dataframe 'final', with total count of babynames from the two years
+
+	final <- merge(y2015, y2016, by=c("FirstName","Gender"),suffixes = c(".2015",".2016"))
+	final$Total <- final$NumberOfChildren.2015+final$NumberOfChildren.2016
+
+5. Summary of variable names in tidy data
+
+	FirstName			: Child's firstname
+	Gender				: Child's gender
+	NumberOfChildren.2015		: Number of time child's name appears in 2015 raw data
+	NumberOfChildren.2016		: Number of time child's name appears in 2015 raw data
+	Total				: Total number of times child name appears in both years.
+
+
