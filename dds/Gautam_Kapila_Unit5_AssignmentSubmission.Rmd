@@ -1,0 +1,83 @@
+---
+title: "Gautam Kapila UNIT5 Assignment Submission"
+author: "G.Kapila"
+date: "7/5/2019"
+output: html_document
+---
+
+## Session and Library Information
+
+```{r documentation, echo=TRUE}
+
+sessionInfo()
+
+library(stringr)
+
+```
+
+## Data Munging
+
+```{r Q1DataMunding, echo=TRUE}
+
+# Reading the file as a table
+
+df <- read.table("HW5_2_2_2\\yob2016.txt",sep = ";")
+colnames(df) <- c('FirstName','Gender','NumberOfChildren')
+
+
+# Summary and Structure of data frame 'df'
+summary(df)
+str(df)
+
+# Displaying the redundant name
+
+as.character(df$FirstName[grep("yyy",df$FirstName)])
+
+# Displaying the original name (that also has a redundant version)
+str_remove(df$FirstName[grep("yyy",df$FirstName)],"yyy")
+
+# Saving remaining dataset as an object 
+y2016 <- df[-grep("yyy",df$FirstName),]
+
+# Summary and Structure of data frame 'y2016'
+summary(y2016)
+str(y2016)
+```
+
+## Data Merging
+
+```{r Q2DataMerging, echo=TRUE}
+
+# Reading the file as a table
+
+y2015 <- read.table("HW5_2_2_2\\yob2015.txt",sep = ",")
+colnames(y2015) <- c('FirstName','Gender','NumberOfChildren')
+
+# Something interesting about last 10 rows
+# -- All are Male names with 'Z' and have occured exactly same number of times !
+
+# Merging the baby names data set from 2015, 2016 by First Name, and Gender
+final <- merge(y2015, y2016, by=c("FirstName","Gender"),suffixes = c(".2015",".2016"))
+
+```
+
+## Data Summary
+
+```{r Q3DataSummary, echo=TRUE}
+
+# Total number of childer over 2015 and 2016 with same name.
+
+final$Total <- final$NumberOfChildren.2015+final$NumberOfChildren.2016
+
+# Sort by Total, and Publish top 10 babynames
+
+as.vector(head(final[order(-final$Total),],10)$FirstName)
+
+# Publish top 10 popular baby girl names
+
+as.vector(head(subset(final[order(-final$Total),],Gender=="F"),10)$FirstName)
+
+# Writing top 10 baby girls into file 'top10BabyGirlNames.csv' with only FirstName and Total columns
+
+write.csv(head(subset(final[order(-final$Total),],Gender=="F"),10)[,c("FirstName","Total")],file = "top10BabyGirlNames.csv",row.names=FALSE)
+```
