@@ -1,0 +1,168 @@
+---
+title: "Gautam Kapila Case Study 1"
+author: "G.Kapila"
+date: "7/5/2019"
+output:
+  html_document:
+  keep_md: yes
+---
+
+# United States Brewery Market and Beer Composition Statistics
+
+## Introduction 
+
+The work summarizes following aspects of US brewery market and beer composition per state
+
+* Number of breweries present per state
+* Acoholic content of craft beers per state
+* Bitterness of the beers per state
+* State with beer having maximum alchoholic content and bitterness
+* Relationship between beer alcoholic content and beer bitterness
+
+It is envisaged that this work could be extended in future, to come up with proposals on where to start a new brewery venture and target beer composition
+
+
+### Session and Library Information
+
+```{r documentation, echo=TRUE}
+
+sessionInfo()
+
+library(tidyr)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+
+```
+### Data Preparation
+```{r readData, echo=TRUE}
+beers <- read.csv(file = "CaseStudy1_2_2_2\\beers.csv",sep = ",")
+breweries <- read.csv(file = "CaseStudy1_2_2_2\\breweries.csv",sep = ",")
+bd    <- merge(beers, breweries, by.x = "Brewery_id", by.y = "Brew_ID")
+bd$State <- gsub('\\s+', '', bd$State)
+colnames(bd) <- c("BreweryID","BeerName","BeerID","ABV","IBU","Style","Oz","BreweryName","City","State")
+write.csv(bd,file = "bd.csv",row.names = FALSE)
+```
+
+### Breweries present in each state
+```{r breweryDistribution, echo=TRUE, message=FALSE, warning=FALSE}
+BDist <- bd %>% dplyr::count(State,sort = TRUE, name = "Count")
+ggplot(data = BDist, aes(x=reorder(State,Count),y=Count,fill = Count)) +
+    geom_bar(stat = "identity",width = 0.7) +
+    coord_flip() +
+    geom_text(aes(label=Count), hjust = -0.5, vjust = 0.1, size=2)+
+    ggtitle('Brewery Count by State') +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    xlab("State")+
+    theme(axis.text = element_text(size = 8)) +
+    scale_fill_gradient(low = "green",high = "red")
+
+  
+
+```
+
+### Printing first 6 and last 6 data from merged file
+
+```{r mergedData, echo=TRUE, message=FALSE, warning=FALSE}
+
+rbind(head(bd,6),tail(bd,6))
+
+```
+
+### Printing NA's count per column
+
+```{r naCount, echo=TRUE, message=FALSE, warning=FALSE}
+sapply(bd, function(x) sum(length(which(is.na(x)))))
+```
+
+### Median Alcohol Content and IBU for each state
+
+```{r medianAlcohoAndIBU, echo=TRUE, message=FALSE, warning=FALSE}
+
+mABVbyState <- bd %>% drop_na(ABV) %>% group_by(State) %>% summarize(mABV = median(ABV))
+ggplot(data = mABVbyState, aes(x=reorder(State,mABV),y=mABV,fill = mABV)) +
+    geom_bar(stat = "identity",width = 0.7) +
+    coord_flip() +
+    geom_text(aes(label=mABV), hjust = -0.5, vjust = 0.1, size=2)+
+    ggtitle('Median ABV by State') +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    xlab("State")+
+    ylab("Median ABV")+
+    theme(axis.text = element_text(size = 8)) +
+    scale_fill_gradient(low = "green",high = "red") +
+    ylim(0,0.07)
+
+
+mIBUbyState <- bd %>% drop_na(IBU) %>% group_by(State) %>% summarize(mIBU = median(IBU))
+ggplot(data = mIBUbyState, aes(x=reorder(State,mIBU),y=mIBU,fill = mIBU)) +
+    geom_bar(stat = "identity",width = 0.7) +
+    coord_flip() +
+    geom_text(aes(label=mIBU), hjust = -0.5, vjust = 0.1, size=2)+
+    ggtitle('Median IBU by State') +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    xlab("State")+
+    ylab("Median IBU")+
+    theme(axis.text = element_text(size = 8)) +
+    scale_fill_gradient(low = "green",high = "red")
+
+```
+
+### State with Max Alcohol Content and Max IBU 
+#### State with Max Alcoholic Beer
+
+```{r maxAlcohol, echo=TRUE, message=FALSE, warning=FALSE}
+
+maxABVbyState <- bd %>% drop_na(ABV) %>% group_by(State) %>% summarize(mABV = max(ABV))
+maxABVState <- as.character(maxABVbyState[order(-maxABVbyState$mABV),][1,1])
+maxABVState
+```
+
+#### State with most bitter bear (max IBU)
+```{r maxIBU, echo=TRUE, message=FALSE, warning=FALSE}
+
+maxIBUbyState <- bd %>% drop_na(IBU) %>% group_by(State) %>% summarize(mIBU = max(IBU))
+maxIBUState <- as.character(maxIBUbyState[order(-maxIBUbyState$mIBU),][1,1])
+maxIBUState
+
+```
+
+### Summary Statistics for ABV variable
+```{r summaryABV, echo=TRUE, message=FALSE, warning=FALSE}
+
+summary(beers$ABV)
+
+```
+
+### Relationship between Beer Bitterness and Alcoholic Content
+```{r scatterPlot, echo=TRUE, message=FALSE, warning=FALSE}
+
+ggplot(bd, aes(x=ABV, y=IBU, color=State)) +
+  geom_point() +
+  xlab("Alcoholic Content of Beer, ABV")+
+  ylab("Bitterness of Beer, IBU") +
+  theme(axis.text = element_text(size = 8)) +
+  ggtitle('Scatter plot between bitterness and alcoholic content') +
+  theme(plot.title = element_text(hjust = 0.5))  
+
+```
+
+#### Following aspects of the relationship are evident
+##### 1. In general, higher bitterness tracks with higher alcholic content.
+##### 2. It appears that one can have a range of bitterness for a given alcoholic content, and vice versa. 
+#####    There is more to getting the right bitterness (IBU) for a beer than just it's alcoholic content (ABV)
+
+## Conclusions
+
+* Colorado by far has the largest number of breweries. 
+    + CA, MI, IN, TX are other states with high density of breweries.
+    + _Targeting these states for additional opening of brewery should be considered._
+* Co ranks 5th in list of states with highest alcholol content producing states.
+    + However, it produces beer with highest alcholic content.
+    + _Perhaps there is additional apetite in market to absorb higher alcholic content beer._
+* Clearly bitterness and alcoholic content track each other.
+    + However, beers with different amount of bitterness can be produced at any given alcoholic content.
+    + _One can be flexible in tailoring beer composition to suite whats popular in local market_
+    
+## GitHub Reference
+
+https://github.com/gkapila07/msds_homeworks/tree/master/dds 

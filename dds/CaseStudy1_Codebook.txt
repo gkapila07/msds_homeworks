@@ -1,0 +1,53 @@
+CaseStudy1 CodeBook
+-------------------
+
+Raw Data
+--------
+	- Contained in two files :  beers.csv and breweries.csv
+	- beers.csv contains information by beer name. First 5 entries in the
+	  file are : 
+		Name			Beer_ID	ABV	IBU	Brewery_id	Style				Ounces
+		Pub Beer		1436	0.05		409		American Pale Lager		12
+		Devil's Cup		2265	0.066		178		American Pale Ale (APA)		12
+		Rise of the Phoenix	2264	0.071		178		American IPA			12
+		Sinister		2263	0.09		178		American Double / Imperial IPA	12
+	- breweries.csv contains information on the brewery. First 5 entries
+	  in the file are :
+
+		Brew_ID	Name				City		State
+		1	NorthGate Brewing 		Minneapolis	 MN
+		2	Against the Grain Brewery	Louisville	 KY
+		3	Jack's Abby Craft Lagers	Framingham	 MA
+		4	Mike Hess Brewing Company	San Diego	 CA
+
+
+Steps to get to tidy Data
+-------------------------
+1. Reading the beers.csv and brewery.csv into data frames :
+
+	Dataframe Name		File Name
+
+	beers			beers.csv
+	breweries		breweries.csv
+
+2. Merging above two datasets into a single data frame 'bd' :
+
+	bd    <- merge(beers, breweries, by.x = "Brewery_id", by.y = "Brew_ID")
+
+3. Setting columnames for the marged data frame :
+	
+	colnames(bd) <- c("BreweryID","BeerName","BeerID","ABV","IBU","Style","Oz","BreweryName","City","State")
+
+4. Summary of variable names in tidy data frame 'bd'
+
+	Brewery ID			: Unique numeric id of the Brewery
+	BeerName			: Name of the beer
+	Beer ID				: Unique numeric id of the Brewery
+	ABV				: Alcoholic content of the beer by volume
+	IBU				: Measure of bitterness of beer : international bitterness unit
+	Style				: Style of beer
+	Oz				: Ounces of beer
+	BreweryName			: Name of the brewery
+	City				: City where the brewery is located
+	State				: U.S. state where brewery is located
+
